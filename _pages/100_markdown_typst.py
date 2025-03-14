@@ -25,17 +25,14 @@ state = {
 _MARKDOWN_EXTENSIONS = [
     "task_lists",
     "pipe_tables",
-    "strikeout",
     "tex_math_dollars",
+    "strikeout",
     "raw_html",
-    "latex_macros",
-    "shortcut_reference_links",
     "footnotes",
-    "citations"
 ]
 
 KEY_TO_FORMAT = {
-    "markdown": "markdown+" + "+".join(_MARKDOWN_EXTENSIONS),
+    "markdown": "+".join(["commonmark"] + _MARKDOWN_EXTENSIONS),
     "typst": "typst",
 }
 
@@ -52,12 +49,14 @@ def do_conversion(source: str, target: str):
     st.session_state[source] = src_content
     st.session_state[target] = target_content
 
-    format = KEY_TO_FORMAT[source]
+
     if src_content == "":
         st.error(f"Please enter some {source} content.")
         return
 
-    output = pypandoc.convert_text(src_content, to=target, format=format)
+    from_format = KEY_TO_FORMAT[source]
+    to_format = KEY_TO_FORMAT[target]
+    output = pypandoc.convert_text(src_content, to=to_format, format=from_format)
 
     st.session_state[target] = output
 
